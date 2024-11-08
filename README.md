@@ -30,7 +30,4 @@ Adicione 3 ou mais screenshots do projeto em funcionamento.
 *Linguagem*: C<br>
 
 ## Uso 
-Explique como usar seu projeto caso haja algum passo a passo após o comando de execução.
-
-## Outros 
-Quaisquer outras informações sobre seu projeto podem ser descritas abaixo.
+Para testar os códigos, basta entrar na plataforma [BeeCrowd](https://judge.beecrowd.com), procurar pelos exercícios e colar na parte source code.
