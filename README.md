@@ -10,7 +10,14 @@
 | 22/1037465  |  Douglas Marinho Martins |
 
 ## Sobre 
-Este projeto consiste no desenvolvimento de questões da maratona de programação SBC que estão presentes no juiz online BeeCrowd sobre o conteúdo de grafos 1 da disciplina de Projeto de Algoritmos. Vão ser desenvolvidos questões de fácil, média e alta complexidade nesse projeto
+Este projeto consiste no desenvolvimento de questões da maratona de programação SBC que estão presentes no juiz online BeeCrowd sobre o conteúdo de grafos 1 da disciplina de Projeto de Algoritmos. Vão ser desenvolvidos questões de fácil, média e alta complexidade nesse projeto, a plataforma beecrowd que iremos usar separa problemas em niveis de 0 a 10 consideramos a seguinte forma para definir a dificuldade:
+
+| Nivel | Dificuldade |
+| -- | -- |
+| Muito Fácil | 0 - 1 |
+| Fácil | 2 - 4 |
+| Média | 5 - 7 |
+| Difícil |  8 - 10 |
 
 ## Questões 
 
