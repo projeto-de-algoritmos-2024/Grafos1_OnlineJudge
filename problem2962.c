@@ -1,135 +1,105 @@
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <math.h>
 
 #define MAX_SENSORES 1000
-#define EPSILON 1e-9
+#define MAX_N 1004
 
+// Estrutura para o algoritmo Union-Find
 typedef struct {
-    int x, y;
-    int sensibilidade;
-} Sensor;
+    int pai[MAX_N];
+    int rank[MAX_N];
+} UnionFind;
 
-// Estrutura para representar o grafo usando lista de adjacência
-typedef struct {
-    bool** adj;  // Matriz de adjacência
-    int V;       // Número de vértices
-} Grafo;
-
-// Função para criar o grafo
-Grafo* criar_grafo(int V) {
-    Grafo* g = (Grafo*)malloc(sizeof(Grafo));
-    g->V = V;
-    g->adj = (bool**)malloc(V * sizeof(bool*));
-    for (int i = 0; i < V; i++) {
-        g->adj[i] = (bool*)calloc(V, sizeof(bool));
+// Função para inicializar o Union-Find
+void inicializar_union_find(UnionFind *uf, int n) {
+    for (int i = 0; i < n; i++) {
+        uf->pai[i] = i;
+        uf->rank[i] = 0;
     }
-    return g;
 }
 
-// Função para liberar a memória do grafo
-void liberar_grafo(Grafo* g) {
-    for (int i = 0; i < g->V; i++) {
-        free(g->adj[i]);
+// Função para encontrar o representante de um conjunto
+int encontrar(UnionFind *uf, int n) {
+    if (uf->pai[n] != n) {
+        uf->pai[n] = encontrar(uf, uf->pai[n]);
     }
-    free(g->adj);
-    free(g);
+    return uf->pai[n];
 }
 
-// Verifica se dois círculos se interceptam
-bool circulos_interceptam(Sensor s1, Sensor s2) {
-    double dist = sqrt(pow(s1.x - s2.x, 2.0) + pow(s1.y - s2.y, 2.0));
-    return dist <= s1.sensibilidade + s2.sensibilidade;
+// Função para unir dois conjuntos
+void unir(UnionFind *uf, int a, int b) {
+    int pai_a = encontrar(uf, a);
+    int pai_b = encontrar(uf, b);
+
+    if (uf->rank[pai_a] > uf->rank[pai_b]) {
+        uf->pai[pai_b] = pai_a;
+    } else if (uf->rank[pai_a] < uf->rank[pai_b]) {
+        uf->pai[pai_a] = pai_b;
+    } else {
+        uf->pai[pai_b] = pai_a;
+        uf->rank[pai_a]++;
+    }
 }
 
-// Verifica se um círculo intercepta uma parede
-bool circulo_intercepta_parede(Sensor s, int M, int N, int parede) {
-    // parede: 0=esquerda, 1=inferior, 2=direita, 3=superior
-    switch(parede) {
-        case 0: // Parede esquerda (x = 0)
-            return s.x <= s.sensibilidade;
-        case 1: // Parede inferior (y = 0)
-            return s.y <= s.sensibilidade;
-        case 2: // Parede direita (x = M)
-            return M - s.x <= s.sensibilidade;
-        case 3: // Parede superior (y = N)
-            return N - s.y <= s.sensibilidade;
-    }
-    return false;
+// Função para verificar se dois pontos estão no mesmo conjunto
+int estao_conectados(UnionFind *uf, int a, int b) {
+    return encontrar(uf, a) == encontrar(uf, b);
 }
 
-// Implementação da busca em profundidade (DFS)
-bool dfs(Grafo* g, bool* visitado, int v, int K) {
-    visitado[v] = true;
-
-    // Se alcançamos a parede oposta (K+3 ou K+4)
-    if (v == K+3 || v == K+4) {
-        return true;
-    }
-
-    for (int i = 0; i < g->V; i++) {
-        if (g->adj[v][i] && !visitado[i]) {
-            if (dfs(g, visitado, i, K)) {
-                return true;
-            }
-        }
-    }
-    return false;
-}
-
-// Função principal que resolve o problema
-bool verifica_roubo_possivel(int M, int N, int K, Sensor sensores[]) {
-    // Criar grafo com K sensores + 4 paredes
-    Grafo* g = criar_grafo(K + 4);
-
-    // Adicionar arestas entre sensores que se interceptam
-    for (int i = 0; i < K; i++) {
-        for (int j = i + 1; j < K; j++) {
-            if (circulos_interceptam(sensores[i], sensores[j])) {
-                g->adj[i][j] = g->adj[j][i] = true;
-            }
-        }
-    }
-
-    // Adicionar arestas entre sensores e paredes
-    for (int i = 0; i < K; i++) {
-        for (int p = 0; p < 4; p++) {
-            if (circulo_intercepta_parede(sensores[i], M, N, p)) {
-                g->adj[i][K+p] = g->adj[K+p][i] = true;
-            }
-        }
-    }
-
-    // Realizar DFS a partir das paredes K+1 e K+2
-    bool* visitado = (bool*)calloc(g->V, sizeof(bool));
-    bool resultado = false;
-
-    // DFS a partir da parede esquerda (K+1)
-    resultado = dfs(g, visitado, K+0, K);
-
-    // Se não encontrou caminho, tenta a partir da parede inferior (K+2)
-    if (!resultado) {
-        for (int i = 0; i < g->V; i++) visitado[i] = false;
-        resultado = dfs(g, visitado, K+1, K);
-    }
-
-    free(visitado);
-    liberar_grafo(g);
-    return !resultado;  // Retorna true se NÃO existe barreira
+// Função para calcular a distância entre dois pontos
+double distancia(int p1[3], int p2[3]) {
+    return sqrt(
+        (p1[0] - p2[0]) * (p1[0] - p2[0]) +
+        (p1[1] - p2[1]) * (p1[1] - p2[1])
+    );
 }
 
 int main() {
-    int M, N, K;
-    scanf("%d %d %d", &M, &N, &K);
+    int m, n, k;
+    int sensores[MAX_SENSORES][3];
 
-    Sensor* sensores = (Sensor*)malloc(K * sizeof(Sensor));
-    for (int i = 0; i < K; i++) {
-        scanf("%d %d %d", &sensores[i].x, &sensores[i].y, &sensores[i].sensibilidade);
+    // Leitura das dimensões e número de sensores
+    scanf("%d %d %d", &m, &n, &k);
+
+    // Inicializa a estrutura Union-Find para k sensores + 4 "paredes" (topo, direita, baixo, esquerda)
+    UnionFind union_find;
+    inicializar_union_find(&union_find, k + 4);
+
+    // Leitura das informações dos sensores
+    for (int i = 0; i < k; i++) {
+        scanf("%d %d %d", &sensores[i][0], &sensores[i][1], &sensores[i][2]);
+
+        // Sensor detecta a parede do topo
+        if (sensores[i][1] + sensores[i][2] >= n)
+            unir(&union_find, 0, i + 4);
+
+        // Sensor detecta a parede da direita
+        if (sensores[i][0] + sensores[i][2] >= m)
+            unir(&union_find, 1, i + 4);
+
+        // Sensor detecta a parede de baixo
+        if (sensores[i][1] - sensores[i][2] <= 0)
+            unir(&union_find, 2, i + 4);
+
+        // Sensor detecta a parede da esquerda
+        if (sensores[i][0] - sensores[i][2] <= 0)
+            unir(&union_find, 3, i + 4);
     }
 
-    printf("%c\n", verifica_roubo_possivel(M, N, K, sensores) ? 'S' : 'N');
+    // Verifica se há interseção entre sensores
+    for (int i = 0; i < k; i++) {
+        for (int j = i + 1; j < k; j++) {
+            if (distancia(sensores[i], sensores[j]) <= sensores[i][2] + sensores[j][2])
+                unir(&union_find, i + 4, j + 4);
+        }
+    }
 
-    free(sensores);
+    // Verifica se a entrada ou saída estão conectadas a alguma parede ou sensor
+    if (estao_conectados(&union_find, 0, 1) || estao_conectados(&union_find, 0, 2) ||
+        estao_conectados(&union_find, 3, 1) || estao_conectados(&union_find, 3, 2))
+        printf("N\n");  // Se houver conexão, o roubo não é possível
+    else
+        printf("S\n");  // Se não houver conexão, o roubo é possível
+
     return 0;
 }
