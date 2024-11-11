@@ -29,12 +29,8 @@ Este projeto consiste no desenvolvimento de questões da maratona de programaç�
 | [1442 - Desvio de Rua](https://judge.beecrowd.com/pt/problems/view/1442) |  Difícil - 8 |
 | [2962 - Arte Valiosa](https://judge.beecrowd.com/pt/problems/view/2962) |  Difícil - 9 |
 
-
-## Screenshots
-Adicione 3 ou mais screenshots do projeto em funcionamento.
-
 ## Instalação 
-*Linguagem*: C<br>
+*Linguagem*: C e C++<br>
 
 ## Uso 
 Para testar os códigos, basta entrar na plataforma [BeeCrowd](https://judge.beecrowd.com), procurar pelos exercícios e colar na parte source code.
