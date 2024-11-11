@@ -34,3 +34,11 @@ Este projeto consiste no desenvolvimento de questões da maratona de programaç�
 
 ## Uso 
 Para testar os códigos, basta entrar na plataforma [BeeCrowd](https://judge.beecrowd.com), procurar pelos exercícios e colar na parte source code.
+
+## Apresentações
+
+As apresentações de cada entrega estão presente nos hiperlinks a seguir:
+
+| [1º Entrega](https://youtu.be/TOmn6VYL30s) | Grafos 1 |
+| 2º Entrega | Grafos 2 |
+
