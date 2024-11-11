@@ -4,6 +4,11 @@
 #define MAX_SENSORES 1000
 #define MAX_N 1004
 
+/*O Union-Find é usado para agrupar sensores e paredes em conjuntos. Sensores que estão conectados entre si ou com as paredes são unidos no mesmo conjunto.
+A operação unir é usada para agrupar sensores ou sensores e paredes, enquanto a operação encontrar é usada para verificar se dois sensores ou um sensor e uma parede estão no mesmo conjunto.
+No final, se a entrada ou saída do retângulo estiver conectada a qualquer sensor ou parede, o código imprime "N" (não é possível realizar o roubo), caso contrário, imprime "S" (é possível realizar o roubo).
+Isso permite que o código determine se um "caminho" de sensores ou paredes bloqueia a entrada ou saída.*/
+
 // Estrutura para o algoritmo Union-Find
 typedef struct {
     int pai[MAX_N];
